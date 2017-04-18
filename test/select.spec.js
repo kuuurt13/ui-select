@@ -174,6 +174,7 @@ describe('ui-select tests', function () {
       if (attrs.backspaceReset !== undefined) { attrsHtml += ' backspace-reset="' + attrs.backspaceReset + '"'; }
       if (attrs.uiDisableChoice !== undefined) { choicesAttrsHtml += ' ui-disable-choice="' + attrs.uiDisableChoice + '"'; }
       if (attrs.removeSelected !== undefined) { attrsHtml += ' remove-selected="' + attrs.removeSelected + '"'; }
+      if (attrs.onRemove !== undefined) { attrsHtml += ' on-remove="' + attrs.onRemove + '"'; }
     }
 
     return compileTemplate(
@@ -1366,6 +1367,27 @@ describe('ui-select tests', function () {
 
     expect(scope.$item).toBe(scope.people[5]);
     expect(scope.$model).toBe('Samantha');
+
+  });
+
+  it('should invoke remove callback on remove for single select with allowClear enabled', function () {
+    scope.selection.selected = scope.people[5];
+
+    scope.onRemoveFn = function ($item, $model) {
+      scope.$item = $item;
+      scope.$model = $model;
+    };
+
+    var el = createUiSelect({ onRemove: 'onRemoveFn($item, $model)', allowClear: true });
+
+    expect(scope.$item).toBeFalsy();
+    expect(scope.$model).toBeFalsy();
+
+    el.find('.glyphicon.glyphicon-remove').click();
+    $timeout.flush();
+
+    expect(scope.$item).toEqual(scope.people[5]);
+    expect(scope.$model).toEqual(scope.$item);
 
   });
 

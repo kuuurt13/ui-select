@@ -454,9 +454,16 @@ uis.controller('uiSelectCtrl',
   };
 
   ctrl.clear = function($event) {
+    var locals = {};
+    locals[ctrl.parserResult.itemName] = ctrl.selected;
+
     ctrl.select(null);
     $event.stopPropagation();
     $timeout(function() {
+      ctrl.onRemoveCallback($scope, {
+        $item: ctrl.items[ctrl.activeIndex],
+        $model: ctrl.parserResult.modelMapper($scope, locals)
+      });
       ctrl.focusser[0].focus();
     }, 0, false);
   };
